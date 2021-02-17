@@ -1,12 +1,12 @@
 <template>
   <div class="container w-50">
     <h1 class="text-center">{{ msg }}</h1>
-      <p v-if="errors.length">
-    <b>Please correct the following error<span v-show="errors.length > 1">s</span>:</b>
-    <ul>
-      <li class="text-danger d-block" v-for="(error, index) in errors" :key="index">{{ error }}</li>
-    </ul>
-  </p>
+    <p v-if="errors.length">
+      <b>Please correct the following error<span v-show="errors.length > 1">s</span>:</b>
+      <ul>
+        <li class="text-danger d-block" v-for="(error, index) in errors" :key="index">{{ error }}</li>
+      </ul>
+    </p>
     <form class="mt-5" @submit="checkForm">
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Name</label>
@@ -43,15 +43,22 @@
       <button type="submit" class="btn btn-primary" >
         Submit
       </button>
+       <!-- 
+          I don't disable the button so you can Actually see those errors on submit but here is the commented code for that. 
+          Thank you
+        -->
+      <!-- <button type="submit" class="btn btn-primary" :disabled="bind-to-something">
+        Submit
+      </button> -->
     </form>
   </div>
 </template>
 
 <script>
-import VueRecaptcha from 'vue-recaptcha';
+import VueRecaptcha from "vue-recaptcha";
 export default {
   name: "HelloWorld",
-  components:{VueRecaptcha},
+  components: { VueRecaptcha },
   props: {
     msg: String,
   },
@@ -63,7 +70,7 @@ export default {
     errors: [],
   }),
   methods: {
-    validateName: function() {
+    validateName: function () {
       this.noName = false;
       if (this.name.length === 50) {
         console.log("maxLengthReached", this.name.length);
@@ -84,15 +91,15 @@ export default {
       } else if (!this.checkEmail(this.email)) {
         this.errors.push("Valid email required.");
       }
-      if(!this.robot) {
-        this.errors.push('Please check recaptcha')
+      if (!this.robot) {
+        this.errors.push("Please check recaptcha");
       }
       if (!this.errors.length) return true;
       e.preventDefault();
     },
-    onVerify: function(response) {
+    onVerify: function (response) {
       if (response) this.robot = true;
-    }
+    },
   },
 };
 </script>
