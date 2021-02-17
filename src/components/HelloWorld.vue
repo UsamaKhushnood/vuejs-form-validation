@@ -1,58 +1,95 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
+  <div class="container w-50">
+    <h1 class="text-center">{{ msg }}</h1>
+      <p v-if="errors.length">
+    <b>Please correct the following error<span v-show="errors.length > 1">s</span>:</b>
     <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
+      <li class="text-danger d-block" v-for="(error, index) in errors" :key="index">{{ error }}</li>
     </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  </p>
+    <form class="mt-5" @submit="checkForm">
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="exampleInputEmail1"
+          aria-describedby="nameHelp"
+          maxlength="50"
+          v-model="name"
+          @keyup="validateName"
+        />
+        <div
+          id="nameHelp"
+          class="form-text text-danger"
+          v-show="maxLengthReached"
+        >
+          Name can't be longet than 50 digits
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Email</label>
+        <input
+          type="email"
+          class="form-control"
+          id="exampleInputEmail1"
+          aria-describedby="emailHelp"
+          v-model="email"
+        />
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1" />
+        <label class="form-check-label" for="exampleCheck1">Check me out</label>
+      </div>
+        <vue-recaptcha ref="recaptcha"
+          @verify="onVerify" sitekey="/*/*/*/*/*/">
+        </vue-recaptcha>
+      <button type="submit" class="btn btn-primary" >
+        Submit
+      </button>
+    </form>
   </div>
 </template>
 
 <script>
+import VueRecaptcha from 'vue-recaptcha';
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
+  components:{VueRecaptcha},
   props: {
-    msg: String
-  }
-}
+    msg: String,
+  },
+  data: () => ({
+    name: null,
+    email: null,
+    maxLengthReached: false,
+    errors: [],
+  }),
+  methods: {
+    validateName() {
+      this.noName = false;
+      if (this.name.length === 50) {
+        console.log("maxLengthReached", this.name.length);
+        this.maxLengthReached = true;
+      } else {
+        this.maxLengthReached = false;
+      }
+    },
+    checkEmail: function (email) {
+      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    },
+    checkForm: function (e) {
+      this.errors = [];
+      if (!this.name) this.errors.push("Name required.");
+      if (!this.email) {
+        this.errors.push("Email required.");
+      } else if (!this.checkEmail(this.email)) {
+        this.errors.push("Valid email required.");
+      }
+      if (!this.errors.length) return true;
+      e.preventDefault();
+    },
+  },
+};
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-</style>
