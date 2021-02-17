@@ -37,11 +37,7 @@
           v-model="email"
         />
       </div>
-      <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-      </div>
-        <VueRecaptcha ref="recaptcha"
+        <VueRecaptcha ref="recaptcha" class="mb-2"
           @verify="onVerify" sitekey="6Lcp3FsaAAAAACIEIggj9dcf4jWqektfPpZe3cwB">
         </VueRecaptcha>
       <button type="submit" class="btn btn-primary" >
@@ -63,10 +59,11 @@ export default {
     name: null,
     email: null,
     maxLengthReached: false,
+    robot: false,
     errors: [],
   }),
   methods: {
-    validateName() {
+    validateName: function() {
       this.noName = false;
       if (this.name.length === 50) {
         console.log("maxLengthReached", this.name.length);
@@ -87,9 +84,15 @@ export default {
       } else if (!this.checkEmail(this.email)) {
         this.errors.push("Valid email required.");
       }
+      if(!this.robot) {
+        this.errors.push('Please check recaptcha')
+      }
       if (!this.errors.length) return true;
       e.preventDefault();
     },
+    onVerify: function(response) {
+      if (response) this.robot = true;
+    }
   },
 };
 </script>
