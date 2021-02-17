@@ -41,9 +41,9 @@
         <input type="checkbox" class="form-check-input" id="exampleCheck1" />
         <label class="form-check-label" for="exampleCheck1">Check me out</label>
       </div>
-        <vue-recaptcha ref="recaptcha"
-          @verify="onVerify" sitekey="/*/*/*/*/*/">
-        </vue-recaptcha>
+        <VueRecaptcha ref="recaptcha"
+          @verify="onVerify" sitekey="6Lcp3FsaAAAAACIEIggj9dcf4jWqektfPpZe3cwB">
+        </VueRecaptcha>
       <button type="submit" class="btn btn-primary" >
         Submit
       </button>
